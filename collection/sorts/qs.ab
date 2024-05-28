@@ -1,0 +1,79 @@
+import {array, erase, parse_split, sort} from "../lib/util.ab"
+import * from "../lib/math.ab"
+import {len} from "std"
+
+fun swap(ref swap_r_arr, a, b) {
+    let temp = swap_r_arr[a]
+    swap_r_arr[a] = swap_r_arr[b]
+    swap_r_arr[b] = temp
+}
+
+fun pop(pop_arr) {
+    return erase(pop_arr, -1)
+}
+
+fun empty(empty_arr): Bool {
+    return not len(empty_arr) as Bool
+} 
+
+fun qs(ref qs_r_arr: [Num]): Null {
+    let qs_arr = qs_r_arr
+    let stack = [Text] // index range - "start end"
+    stack += ["0 {len(qs_arr)-1}"]
+
+    loop {
+        if(empty(stack)): break
+        let top = stack[-1]
+        stack = pop(stack)
+
+        let ranges = parse_split(top) failed {
+            fail 1 // SHOULDN'T happen
+        }
+        let left = ranges[0]
+        let right = ranges[1]
+        if (left >= right): continue
+
+        let pivot = floor(random() * (right - left)) + left // pivot index
+        swap(qs_arr, pivot, right)
+        pivot = qs_arr[right] // pivot value
+
+        let l = left
+        let r = right - 1
+        loop {
+            if {
+                l > r: break
+                qs_arr[l] > pivot and qs_arr[r] < pivot {
+                    swap(qs_arr, l, r)
+                    l += 1
+                    r -= 1
+                }
+                else {
+                    l += (qs_arr[l] <= pivot then 1 else 0)
+                    r -= (qs_arr[r] >= pivot then 1 else 0)
+                }
+            }
+        }
+        swap(qs_arr, l, right)
+        stack += ["{left} {l-1}", "{l+1} {right}"]
+    }
+    qs_r_arr = qs_arr
+}
+
+main {
+    let arr = array(30, 0)
+    loop i in 0..len(arr) {
+        arr[i] = floor(random() * 20)
+    }
+    let _arr = arr
+    
+    echo "Original:"
+    echo "{arr}"
+    
+    unsafe qs(arr)
+    echo "QS in Amber:"
+    echo "{arr}"
+
+    let s_arr = sort(_arr)
+    echo "Using bash's sort:"
+    echo "{s_arr}"
+}

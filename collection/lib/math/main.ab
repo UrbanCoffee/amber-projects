@@ -1,0 +1,16 @@
+// Interfaces to bc
+
+#[allow_absurd_cast]
+pub fun truncate(x: Num, scale: Num): Num {
+    return unsafe $echo "scale={scale}; {x} / 1" | bc -l$ as Num
+}
+
+pub fun floor(x: Num): Num {
+    let _x = truncate(x,0)
+    return _x + (x < _x then -1 else 0)
+}
+
+pub fun ceil(x: Num): Num {
+    let _x = truncate(x,0)
+    return _x + (x > _x then 1 else 0)
+}

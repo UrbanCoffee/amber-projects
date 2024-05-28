@@ -1,0 +1,9 @@
+#[allow_absurd_cast]
+pub fun rand(): Num {
+    return (unsafe $echo \$RANDOM$) as Num
+}
+
+// random between [0,1]
+pub fun random(): Num {
+    return rand() / 32767 // 2^15-1
+}

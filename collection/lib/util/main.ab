@@ -1,0 +1,15 @@
+import {split, parse} from "std"
+
+pub fun parse_split(line: Text): [Num] {
+    let n = [Num]
+    loop i, l in split(line, " ") {
+        n += [parse(l)?]
+    }
+    return n
+}
+
+pub fun sort(arr) { // using bash
+    let sorted = [Num]
+    unsafe $IFS=\$'\n' {nameof sorted}=(\$(sort -n <<<"\$\{{nameof arr}[*]}"))$
+    return sorted
+}
