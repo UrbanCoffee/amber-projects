@@ -26,7 +26,7 @@ fun qs(ref qs_r_arr: [Num]): Null {
         let top = stack[-1]
         stack = pop(stack)
 
-        let ranges = parse_split(top) failed {
+        let ranges = parse_split(top, " ") failed {
             fail 1 // SHOULDN'T happen
         }
         let left = ranges[0]

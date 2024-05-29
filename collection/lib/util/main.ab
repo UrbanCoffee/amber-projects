@@ -1,8 +1,8 @@
 import {split, parse} from "std"
 
-pub fun parse_split(line: Text): [Num] {
+pub fun parse_split(line: Text, delimiter: Text): [Num] {
     let n = [Num]
-    loop i, l in split(line, " ") {
+    loop i, l in split(line, delimiter) {
         n += [parse(l)?]
     }
     return n
