@@ -4,7 +4,7 @@ pub fun erase(erase_arr, index){
     return erase_arr
 }
 
-// create an array of some specificied size and set all its elements to init
+// create an array of some specified size and set all its elements to init
 pub fun array(size, init) {
     let arr = [init] // sets arr to be the same type as init
     arr = erase(arr, 0) // immediately remove init in case size<=0
