@@ -1,0 +1,39 @@
+import {floor, random} from "../lib/math.ab"
+import {len, split} from "std"
+
+fun async(cmd: Text): Text {
+    let fd = ""
+    $ exec \{{nameof fd}}< <( eval {cmd} )$?
+    return fd
+}
+
+fun async_get(async_fd: Text): Text {
+    return $cat <&{async_fd}$?
+}
+
+main (args) {
+    let words = ["Hello,", "World!", "I", "am", "Urban!"]
+    let async_fds = [Text]
+
+    loop word in words {
+        let rand_time = floor(random() * 5) + 1
+        let fd = async("sleep {rand_time} ; echo \"{word}\"") failed {
+            echo "Async Command encountered an error."
+            continue
+        }
+        echo "\"{word}\": {fd} : {rand_time}"
+        async_fds += ["{fd}"]
+    }
+
+    echo "\nI sleep"
+    unsafe $sleep 10$
+    echo "Alright, back to business\n"
+
+    loop fd in async_fds {
+        let results = async_get(fd) failed {
+            echo "Get failed"
+            continue
+        }
+        echo "Results: {results}"
+    }
+}
