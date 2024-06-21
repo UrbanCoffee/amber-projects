@@ -1,0 +1,54 @@
+import {parse_split, array} from "../lib/util.ab"
+import * from "std"
+
+fun parse_items(items: Text, ref w: [Num], ref v: [Num]): Null {
+    loop i, item in lines(items) {
+        let w_v = parse_split(item, " ")?
+        if(len(w_v) != 2){ fail 1 }
+        
+        w += [w_v[0]]
+        v += [w_v[1]]
+    }
+}
+
+main {
+    let weights = [Num]
+    let values = [Num]
+
+    let item_file = input("> Item File: ")
+    let N = 0
+    loop {
+        N = parse(input("> Knapsack Capacity (N): ")) failed {
+            echo "! Input is not a number. Try again."
+            continue
+        }
+        break
+    } 
+
+    let items = file_read(item_file) failed {
+        echo "Reading file '{item_file}' failed.\nExiting"
+        exit(1)
+    } 
+
+    parse_items(items, weights, values) failed {
+        echo "Parsing failed.\nExiting"
+        exit(1)
+    }
+
+    // 0/1 KNAPSACK
+    // only requires a 1D array
+    let knapsack = array(N+1, 0)
+
+    loop i, w in weights { // loop over items
+        loop j in 0..=N {
+            let k = N - j // iterate backwards
+            if {
+                w > k: break
+                knapsack[k-w] + values[i] > knapsack[k]:  knapsack[k] = knapsack[k-w] + values[i]
+            }
+        }
+    }
+
+    let result = N >= 0 then knapsack[N] else 0
+    echo "The maximum possible value with knapsack capacity of N={N} is {result}."
+}
