@@ -1,0 +1,46 @@
+// for amber 0.3.3-alpha
+import {len, exit, parse} from "std"
+
+pub fun subarray(arr, start, end) {
+    // assume arr is always an array
+    let count = end - start + 1
+    if count < 0: count = 0
+    ${nameof arr}=("\$\{{nameof arr}[@]:({start}):({count})}")$?
+    return arr
+}
+
+fun parse_text_array(arr: [Text]): [Num] {
+    let num_arr = [Num]
+    loop a in arr {
+        num_arr += [parse(a) failed {continue}]
+    }
+    return num_arr
+}
+
+// sum via recursion
+main (args) {
+    // get name of program
+    let this = ""
+    unsafe {
+        this = $echo \$0$
+    }
+
+    // expect arguments to be nums
+    // args is [Text]. change to [Num]
+    let num_args = parse_text_array(args)
+    let s_array = subarray(num_args, 2, len(num_args))?
+
+    // perform recursion by calling this program again with args
+    // [name] [x1 + x2] [x3] [x4] [...]
+    if {
+        (len(num_args) <= 0): echo 0
+        (len(num_args) == 1): echo num_args[0]
+        else:
+            echo ${this} {num_args[0] + num_args[1]} {s_array}$ failed {
+                echo "recursion failed"
+                exit(1)
+            }
+    }
+
+    exit(0)
+}

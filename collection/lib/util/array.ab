@@ -4,6 +4,17 @@ pub fun erase(erase_arr, index){
     return erase_arr
 }
 
+#[allow_camel_case]
+pub fun isArray(arr): Bool {
+    return (
+        arr is [Num]  or
+        arr is [Text] or
+        arr is [Bool] or
+        arr is [Null]
+    )
+    // why is [Null] a thing
+}
+
 // create an array of some specified size and set all its elements to init
 pub fun array(size, init) {
     let arr = [init] // sets arr to be the same type as init
@@ -11,5 +22,13 @@ pub fun array(size, init) {
 
     loop _ in 0..size {arr += [init]}
 
+    return arr
+}
+
+pub fun subarray(arr, start, end) {
+    // assume arr is always an array
+    let count = end - start + 1
+    if count < 0: count = 0
+    silent ${nameof arr}=("\$\{{nameof arr}[@]:({start}):({count})}")$?
     return arr
 }
