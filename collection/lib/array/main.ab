@@ -1,11 +1,13 @@
+import {floor} from "../math.ab"
+import {len} from "std"
+
 pub fun erase(erase_arr, index){
     unsafe $unset {nameof erase_arr}[{index}]$
     unsafe ${nameof erase_arr}=("\$\{{nameof erase_arr}[@]}")$
     return erase_arr
 }
 
-#[allow_camel_case]
-pub fun isArray(arr): Bool {
+pub fun is_array(arr): Bool {
     return (
         arr is [Num]  or
         arr is [Text] or
@@ -25,10 +27,42 @@ pub fun array(size, init) {
     return arr
 }
 
+// arr - Array to splice
+// start - INDEX to start from
+// end - INDEX to end at (exclusive)
 pub fun subarray(arr, start, end) {
     // assume arr is always an array
+    start = floor(start)
+    end = floor(end)
+
+    if start == end:
+        return array(0, arr[0])
+
+    if start < 0: start = len(arr) + start
+    if end < 0: end = len(arr) + end - 1
+
     let count = end - start + 1
     if count < 0: count = 0
-    silent ${nameof arr}=("\$\{{nameof arr}[@]:({start}):({count})}")$?
+    silent unsafe ${nameof arr}=("\$\{{nameof arr}[@]:({start}):({count})}")$
     return arr
+}
+
+pub fun clear(arr) {
+    return subarray(arr,0,0)
+}
+
+pub fun reverse(arr) {
+    let r_arr = clear(arr)
+    loop a in arr {
+        r_arr = [a] + r_arr
+    }
+    return r_arr
+}
+
+pub fun includes(arr, value): Bool {
+    loop v in arr {
+        if v == value:
+            return true
+    } 
+    return false
 }
