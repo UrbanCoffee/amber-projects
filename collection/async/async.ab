@@ -1,10 +1,21 @@
-import {floor, random} from "../lib/math.ab"
-import {len, split} from "std"
+import {split} from "std"
 
-fun async(cmd: Text): Text {
+fun async(cmd: Text): [Text] {
     let fd = ""
-    $ exec \{{nameof fd}}< <( eval {cmd} )$?
-    return fd
+    let pid = ""
+    $exec \{{nameof fd}}< <( ( eval {cmd} ) 2>&1; exit \$? )$?
+    ${nameof pid}=\$!$?
+    return [pid, fd]
+}
+
+fun async_finished(async_pid: Text): Bool {
+    unsafe $[[ \$(ps -q {async_pid} --no-heading) == "" ]]$
+    return not status as Bool
+}
+
+fun async_wait(async_pid: Text): Num {
+    unsafe $wait {async_pid}$
+    return status
 }
 
 fun async_get(async_fd: Text): Text {
@@ -12,28 +23,42 @@ fun async_get(async_fd: Text): Text {
 }
 
 main (args) {
-    let words = ["Hello,", "World!", "I", "am", "Urban!"]
     let async_fds = [Text]
 
-    loop word in words {
-        let rand_time = floor(random() * 5) + 1
-        let fd = async("sleep {rand_time} ; echo \"{word}\"") failed {
+    loop action in 0..=3 {
+        let fds = async("
+            sleep {action};
+            alpha=$(( 4 + {action} ));
+            beta=6;
+            if [[ \\$alpha -gt \\$beta ]]; then
+                echo \"Alpha is greater than Beta\" ;
+            else
+                echo \"Alpha is smaller than or equal to Beta\" ;
+            fi
+        ") failed {
             echo "Async Command encountered an error."
             continue
         }
-        echo "\"{word}\": {fd} : {rand_time}"
-        async_fds += ["{fd}"]
+        echo "{action}: {fds}"
+        async_fds += ["{fds[0]} {fds[1]}"]
     }
 
     echo "\nI sleep"
-    unsafe $sleep 10$
+    unsafe $sleep 1.5$
     echo "Alright, back to business\n"
 
-    loop fd in async_fds {
-        let results = async_get(fd) failed {
+    loop fds in async_fds {
+        let items = split(fds, " ")
+        if {
+            async_finished(items[0]): echo "Finished"
+            else: echo "Not finished"
+        }
+        
+        let _status = async_wait(items[0])
+        let results = async_get(items[1]) failed {
             echo "Get failed"
             continue
         }
-        echo "Results: {results}"
+        echo "Results ({_status}): {results}"
     }
 }
