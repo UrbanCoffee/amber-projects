@@ -1,0 +1,20 @@
+import * from "../lib/ansi.ab"
+import {print, printf, sleep} from "../lib/util.ab"
+import {floor} from "../lib/math.ab"
+
+main (args) {
+    print("Hello\n");
+    print(bold("Hello") + "\n");
+    print(dim("Hello") + "\n");
+    print(italic("Hello") + "\n");
+    print(underline("Hello") + "\n");
+    print(blink("Hello") + "\n");
+    print(invert_text("Hello") + "\n");
+    print(invisible("Hello") + "\n");
+    print(strikethrough("Hello") + "\n");
+    bell();
+
+    sleep(1);
+    print(rgb(italic("Hello"), 100,50,150) + "\n");
+    printf("%s %o\n", ["Hello there,", "30"])
+}

@@ -1,0 +1,46 @@
+import * from "../lib/ansi.ab"
+import {includes} from "../lib/array.ab"
+import {print} from "../lib/util.ab"
+
+main(args) {
+    let input = ""
+    let escape = $printf "\e"$?
+    let backspace = $printf "\177"$?
+    let _backspace = $printf "\b"$?
+    let digits = [Text]
+    loop i in 0..=9 {
+        digits += ["{i}"]
+    }
+
+    line_wrap_disable();
+    hide_cursor();
+
+    loop {
+        unsafe $read -rsN1 {nameof input}$
+        if {
+            includes(digits, input):
+                print(yellow(input))
+            input == "\n": print(magenta("[ENTER]"))
+            input == escape {
+                unsafe $read -rsn3 -t.001 {nameof input}$
+                if {
+                    input == "[A": print(blue("[UP]"))
+                    input == "[B": print(blue("[DOWN]"))
+                    input == "[C": print(red("[RIGHT]"))
+                    input == "[D": print(yellow("[LEFT]"))
+                    input == "[3~": print(cyan("[DEL]"))
+                    input == "" {
+                        print(rgb("[ESC]", 50, 100, 150))
+                        break
+                    }
+                    else: print("/{input}")
+                }
+            }
+            else: continue
+        }
+    }
+    print("\n")
+
+    line_wrap_enable();
+    show_cursor();
+}

@@ -1,0 +1,144 @@
+import {floor} from "../math.ab"
+import {print} from "../util.ab"
+import {subarray} from "../array.ab"
+
+pub fun _black_(): Text     { return "\e[30m" }
+pub fun _red_(): Text       { return "\e[31m" }
+pub fun _green_(): Text     { return "\e[32m" }
+pub fun _yellow_(): Text    { return "\e[33m" }
+pub fun _blue_(): Text      { return "\e[34m" }
+pub fun _magenta_(): Text   { return "\e[35m" }
+pub fun _cyan_(): Text      { return "\e[36m" }
+pub fun _white_(): Text     { return "\e[37m" }
+pub fun default(): Text     { return "\e[39m" }
+
+pub fun _bg_black_(): Text      { return "\e[40m" }
+pub fun _bg_red_(): Text        { return "\e[41m" }
+pub fun _bg_green_(): Text      { return "\e[42m" }
+pub fun _bg_yellow_(): Text     { return "\e[43m" }
+pub fun _bg_blue_(): Text       { return "\e[44m" }
+pub fun _bg_magenta_(): Text    { return "\e[45m" }
+pub fun _bg_cyan_(): Text       { return "\e[46m" }
+pub fun _bg_white_(): Text      { return "\e[47m" }
+pub fun bg_default(): Text      { return "\e[49m" }
+
+pub fun reset(): Text     { return "\e[0m"  }
+
+// _RGB_:
+//  ensures that r,g,b nums are within [0-255]
+//  and that they are ints
+pub fun _RGB_(r: Num, g: Num, b: Num): Text {
+    r = floor(r) 
+    g = floor(g) 
+    b = floor(b)
+    
+    if {
+        r < 0: r = 0
+        r > 255: r = 255
+    }
+    if {
+        g < 0: g = 0
+        g > 255: g = 255
+    }
+    if {
+        b < 0: b = 0
+        b > 255: b = 255
+    }
+    return "{r};{g};{b}";
+}
+
+pub fun _rgb_(r: Num, g: Num, b: Num): Text {
+    return "\e[38;2;{_RGB_(r,g,b)}m"
+}
+pub fun _bg_rgb_(r: Num, g: Num, b: Num): Text {
+    return "\e[48;2;{_RGB_(r,g,b)}m"
+}
+
+// ======================
+
+pub fun black(str: Text): Text      { return _black_()   + str + default(); }
+pub fun red(str: Text): Text        { return _red_()     + str + default(); }
+pub fun green(str: Text): Text      { return _green_()   + str + default(); }
+pub fun yellow(str: Text): Text     { return _yellow_()  + str + default(); }
+pub fun blue(str: Text): Text       { return _blue_()    + str + default(); }
+pub fun magenta(str: Text): Text    { return _magenta_() + str + default(); }
+pub fun cyan(str: Text): Text       { return _cyan_()    + str + default(); }
+pub fun white(str: Text): Text      { return _white_()   + str + default(); }
+
+pub fun rgb(str: Text, r: Num, g: Num, b: Num): Text {
+    return _rgb_(r,g,b) + str + default();
+}
+
+// ============
+
+pub fun bg_black(str: Text): Text   { return _bg_black_()     + str + bg_default(); }
+pub fun bg_red(str: Text): Text     { return _bg_red_()       + str + bg_default(); }
+pub fun bg_green(str: Text): Text   { return _bg_green_()     + str + bg_default(); }
+pub fun bg_yellow(str: Text): Text  { return _bg_yellow_()    + str + bg_default(); }
+pub fun bg_blue(str: Text): Text    { return _bg_blue_()      + str + bg_default(); }
+pub fun bg_magenta(str: Text): Text { return _bg_magenta_()   + str + bg_default(); }
+pub fun bg_cyan(str: Text): Text    { return _bg_cyan_()      + str + bg_default(); }
+pub fun bg_white(str: Text): Text   { return _bg_white_()     + str + bg_default(); }
+
+pub fun bg_rgb(str: Text, r: Num, g: Num, b: Num): Text {
+    return _bg_rgb_(r,g,b) + str + bg_default();
+}
+
+// =============
+
+pub fun save_cursor(): Null      { print("\e[s") }
+pub fun restore_cursor(): Null   { print("\e[u") }
+pub fun hide_cursor(): Null { print("\e[?25l") }
+pub fun show_cursor(): Null { print("\e[?25h") }
+
+// graphics mode
+// returns "\e[#;#;#;...;#m"
+pub fun gmode(modes: [Num]): Text {
+    let escape = "\e[";
+    loop m in subarray(modes, 0, -1) {
+        escape += "{floor(m)};"
+    }
+    escape += "{floor(modes[-1])}" + "m"
+    return escape;
+}
+
+pub fun bold(str: Text): Text           { return "\e[1m{str}\e[22m"; }
+pub fun dim(str: Text): Text            { return "\e[2m{str}\e[22m"; }
+pub fun italic(str: Text): Text         { return "\e[3m{str}\e[23m"; }
+pub fun underline(str: Text): Text      { return "\e[4m{str}\e[24m"; }
+pub fun blink(str: Text): Text          { return "\e[5m{str}\e[25m"; }
+pub fun invert_text(str: Text): Text    { return "\e[7m{str}\e[27m"; }
+pub fun invisible(str: Text): Text      { return "\e[8m{str}\e[28m"; }
+pub fun strikethrough(str: Text): Text  { return "\e[9m{str}\e[29m"; }
+
+pub fun bell(): Null { print("\a") }
+
+
+pub fun carriage_return(): Null         { print("\r")         }
+pub fun clear_rest_of_line(): Null      { print("\e[0K")      }
+pub fun clear_rest_of_display(): Null   { print("\e[0J")      }
+pub fun lines_up(n: Num): Null          { print("\e[{n}F")    }
+pub fun lines_down(n: Num): Null        { print("\e[{n}E")    }
+pub fun to_column(n: Num): Null         { print("\e[{n}G")    }
+pub fun cursor_home(): Null             { print("\e[H")       }
+pub fun cursor_up(n: Num): Null         { print("\e[{n}A")    }
+pub fun cursor_down(n: Num): Null       { print("\e[{n}B")    }
+pub fun cursor_right(n: Num): Null      { print("\e[{n}C")    }
+pub fun cursor_left(n: Num): Null       { print("\e[{n}D")    }
+// pub fun cursor_to(ln: Num, cl: Num)     { print("\e[{ln};{cl}H") }
+// pub fun cursor_to(ln: Num, cl: Num): Null { print("\e[{ln};{cl}f") }
+
+// pub fun cursor_pos(): [Num] {}
+
+// =================
+
+pub fun smode(value: Num): Text {
+    return "\e[={floor(value)}h";
+}
+
+pub fun rsmode(value: Num): Text {
+    return "\e[={floor(value)}l"
+}
+
+pub fun line_wrap_enable(): Null  { print(smode(7))  }
+pub fun line_wrap_disable(): Null { print(rsmode(7)) }

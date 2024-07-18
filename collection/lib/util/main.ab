@@ -8,8 +8,21 @@ pub fun parse_split(line: Text, delimiter: Text): [Num] {
     return n
 }
 
-pub fun sort(arr) { // using bash
+pub fun sort(arr: [Num]): [Num] { // using bash
     let sorted = [Num]
     unsafe $IFS=\$'\n' {nameof sorted}=(\$(sort -n <<<"\$\{{nameof arr}[*]}"))$
     return sorted
+}
+
+pub fun print(str: Text): Null {
+    unsafe $printf "{str}"$
+}
+
+pub fun printf(template_str: Text, args: [Text]): Null {
+    unsafe $printf "{[template_str] + args}"$
+}
+
+pub fun sleep(t: Num): Null {
+    if t <= 0: return null;
+    unsafe $sleep {t}$
 }
