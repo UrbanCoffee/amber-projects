@@ -1,5 +1,6 @@
-import {array, erase, parse_split, sort} from "../lib/util.ab"
-import * from "../lib/math.ab"
+import {parse_split, sort} from "../../lib/util.ab"
+import {array, erase} from "../../lib/array.ab"
+import * from "../../lib/math.ab"
 import {len} from "std"
 
 fun swap(ref swap_r_arr, a, b) {

@@ -1,6 +1,6 @@
-import * from "../lib/ansi.ab"
-import {includes} from "../lib/array.ab"
-import {print} from "../lib/util.ab"
+import * from "../../lib/ansi.ab"
+import {includes} from "../../lib/array.ab"
+import {print} from "../../lib/util.ab"
 
 main(args) {
     let input = ""

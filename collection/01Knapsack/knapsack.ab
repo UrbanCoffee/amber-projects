@@ -1,5 +1,5 @@
-import {parse_split} from "../lib/util.ab"
-import {array} from "../lib/array.ab"
+import {parse_split} from "../../lib/util.ab"
+import {array} from "../../lib/array.ab"
 import * from "std"
 
 fun parse_items(items: Text, ref w: [Num], ref v: [Num]): Null {
