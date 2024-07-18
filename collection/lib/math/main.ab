@@ -1,4 +1,4 @@
-// Interfaces to bc
+import {len} from "std"
 
 #[allow_absurd_cast]
 pub fun truncate(x: Num, scale: Num): Num {
@@ -13,4 +13,20 @@ pub fun floor(x: Num): Num {
 pub fun ceil(x: Num): Num {
     let _x = truncate(x,0)
     return _x + (x > _x then 1 else 0)
+}
+
+pub fun min(X: [Num]): Num {
+    let min = X[0]
+    loop i in 1..len(X) {
+        min = (min > X[i]) then X[i] else min
+    }
+    return min
+}
+
+pub fun max(X: [Num]): Num {
+    let max = X[0]
+    loop i in 1..len(X) {
+        max = (max < X[i]) then X[i] else max
+    }
+    return max
 }
