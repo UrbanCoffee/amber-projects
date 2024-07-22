@@ -1,5 +1,5 @@
 import {floor} from "../math.ab"
-import {len} from "std"
+import {len, trim, parse} from "std"
 
 pub fun erase(erase_arr, index){
     unsafe $unset {nameof erase_arr}[{index}]$
@@ -27,21 +27,49 @@ pub fun array(size, init) {
     return arr
 }
 
+fun _manage_range_indices_(arr, start, end): [Num] {
+    if not (start is Text or start is Num) 
+       or not (end is Text or end is Num):  fail 1
+
+    let _start = "{start}"
+    let _end = "{end}"
+
+    let indices = [-1,-1]
+
+    if trim(_start) == ":": 
+        indices[0] = 0
+    else:
+        indices[0] = parse(_start) failed {fail 1}
+
+    if trim(_end) == ":": 
+        indices[1] = len(arr)
+    else: 
+        indices[1] = parse(_end) failed {fail 1}    
+
+    return indices
+}
+
 // arr - Array to splice
 // start - INDEX to start from
+//      if start == ":" then return all elements BEFORE end index
 // end - INDEX to end at (exclusive)
-pub fun subarray(arr, start, end) {
+//      if end == ":" then return all elements AT AND AFTER start index
+pub fun subarray(arr, _start, _end) {
     // assume arr is always an array
-    start = floor(start)
-    end = floor(end)
+    let indices = _manage_range_indices_(arr, _start, _end) failed {
+        return array(0, arr[0])
+    }
+
+    let start = floor(indices[0])
+    let end = floor(indices[1])
 
     if start == end:
         return array(0, arr[0])
 
     if start < 0: start = len(arr) + start
-    if end < 0: end = len(arr) + end - 1
+    if end < 0: end = len(arr) + end
 
-    let count = end - start + 1
+    let count = end - start
     if count < 0: count = 0
     silent unsafe ${nameof arr}=("\$\{{nameof arr}[@]:({start}):({count})}")$
     return arr
