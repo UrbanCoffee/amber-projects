@@ -140,5 +140,5 @@ pub fun rsmode(value: Num): Text {
     return "\e[={floor(value)}l"
 }
 
-pub fun line_wrap_enable(): Null  { print(smode(7))  }
-pub fun line_wrap_disable(): Null { print(rsmode(7)) }
+pub fun line_wrap_enable(): Null  { unsafe $tput smam$ } //print(smode(7))  }
+pub fun line_wrap_disable(): Null { unsafe $tput rmam$ } //print(rsmode(7)) }
