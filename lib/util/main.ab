@@ -15,7 +15,7 @@ pub fun sort(arr: [Num]): [Num] { // using bash
 }
 
 pub fun print(str: Text): Null {
-    unsafe $printf "{str}"$
+    unsafe $printf -- "\$\{{nameof str}//%/%%}"$
 }
 
 pub fun printf(template_str: Text, args: [Text]): Null {
